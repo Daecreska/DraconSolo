@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DracoSolo SHOP — Фирменный магазин</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        /* --- ОБЩИЕ СТИЛИ И ПЕРЕМЕННЫЕ --- */
+        :root {
+            --bg-color: #1a1a1a;
+            --primary-text-color: #ffffff;
+            --secondary-text-color: #cccccc;
+            --accent-color: #FFD700;
+            --accent-gradient: linear-gradient(45deg, #FFB800, #FFD700);
+            --card-bg-color: #252525;
+            --font-family: 'Montserrat', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--primary-text-color); font-family: var(--font-family); overflow-x: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        section { padding: 80px 0; }
+        .section-title { font-size: 3rem; font-weight: 900; text-align: center; margin-bottom: 50px; color: var(--primary-text-color); text-transform: uppercase; }
+
+        /* --- СТИЛИ ДЛЯ СИСТЕМЫ СТРАНИЦ --- */
+        .page {
+            display: none; /* Скрываем все страницы по умолчанию */
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        .page.active {
+            display: block; /* Показываем только активную */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-content { 
+            padding-top: 120px; 
+            min-height: calc(100vh - 250px); /* Минимальная высота, чтобы подвал не прилипал к шапке на пустых страницах */
+        }
+
+        /* --- ШАПКА --- */
+        .header { position: fixed; top: 0; left: 0; width: 100%; padding: 20px 0; background-color: rgba(26, 26, 26, 0.8); backdrop-filter: blur(10px); z-index: 1000; }
+        .header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--accent-color); text-decoration: none; letter-spacing: 1px; cursor: pointer; }
+        .navigation ul { list-style: none; display: flex; gap: 40px; }
+        .navigation a { color: var(--primary-text-color); text-decoration: none; font-weight: 600; position: relative; padding-bottom: 5px; transition: color 0.3s ease; cursor: pointer; }
+        .navigation a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-color); transform: scaleX(0); transform-origin: right; transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
+        .navigation a:hover, .navigation a.active-link { color: var(--accent-color); }
+        .navigation a:hover::after, .navigation a.active-link::after { transform: scaleX(1); transform-origin: left; }
+        .header-search i { font-size: 1.2rem; cursor: pointer; transition: color 0.3s, transform 0.3s; }
+        .header-search i:hover { color: var(--accent-color); transform: scale(1.2); }
+
+        /* --- ГЛАВНЫЙ БЛОК (HERO) --- */
+        .hero { position: relative; height: 100vh; display: flex; align-items: center; color: white; overflow: hidden; }
+        .parallax-bg { position: absolute; top: -20%; left: 0; width: 100%; height: 140%; background-size: cover; background-position: center; z-index: -1; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 0; }
+        .hero-container { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+        .hero-content { max-width: 50%; }
+        .hero-content .subtitle { display: block; font-size: 1.2rem; font-weight: 600; margin-bottom: 10px; color: var(--accent-color); }
+        .hero-content .main-title { font-size: 4rem; font-weight: 900; line-height: 1.1; margin-bottom: 30px; }
+        .button { display: inline-block; padding: 15px 35px; background: var(--accent-gradient); color: #000; text-decoration: none; font-weight: 700; border-radius: 8px; text-transform: uppercase; transition: transform 0.3s, box-shadow 0.3s; border: none; cursor: pointer; }
+        .button:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3); }
+        .hero-hit-product { background-color: var(--card-bg-color); padding: 30px; border-radius: 15px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; transition: transform 0.4s ease; }
+        .hit-badge { position: absolute; top: 15px; right: 15px; background: var(--accent-color); color: #000; padding: 5px 10px; border-radius: 5px; font-weight: 700; font-size: 0.9rem; }
+        .hit-product-image { max-width: 250px; margin-bottom: 20px; }
+        .hit-product-price { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; }
+        .button-secondary { display: inline-block; padding: 12px 30px; background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); text-decoration: none; font-weight: 700; border-radius: 8px; transition: background-color 0.3s, color 0.3s; }
+        .button-secondary:hover { background-color: var(--accent-color); color: #000; }
+
+        /* --- ТОВАРЫ --- */
+        .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .product-card { background: var(--card-bg-color); border-radius: 15px; overflow: hidden; text-align: center; transition: transform 0.4s, box-shadow 0.4s; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; position: relative; transform-style: preserve-3d; }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .product-card-image { height: 300px; background-size: cover; background-position: center; position: relative; transition: transform 0.5s ease; }
+        .product-card:hover .product-card-image { transform: scale(1.1); }
+        .favorite-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.2rem; cursor: pointer; transition: background 0.3s, color 0.3s; z-index: 2;}
+        .favorite-btn:hover { background: var(--accent-color); color: black; }
+        .favorite-btn .fas { color: #ff6b6b; }
+        .product-card-title { font-size: 1.2rem; font-weight: 600; margin: 20px 0 10px; }
+        .product-card-price { font-size: 1.3rem; font-weight: 700; color: var(--accent-color); margin-bottom: 20px; }
+
+        /* --- НОВИНКИ --- */
+        .new-arrivals-container { display: flex; align-items: center; gap: 50px; }
+        .new-arrivals-info { flex: 1; }
+        .new-arrivals-info .section-title { text-align: left; margin-bottom: 20px; }
+        .new-arrivals-info p { color: var(--secondary-text-color); margin-bottom: 30px; font-size: 1.1rem; }
+        .new-arrivals-grid { flex: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+        /* --- FAQ --- */
+        .faq-accordion { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--card-bg-color); margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .faq-question { padding: 25px; font-size: 1.2rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: relative; }
+        .faq-question i { transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); font-size: 1.4rem; color: var(--accent-color); }
+        .faq-item.active .faq-question i { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0, 1, 0, 1), padding 0.5s ease; }
+        .faq-answer p { padding: 0 25px 25px; line-height: 1.7; color: var(--secondary-text-color); }
+        
+        /* --- ОТЗЫВЫ В FAQ --- */
+        .faq-testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px; text-align: center; }
+        .testimonial-card { background: var(--card-bg-color); padding: 30px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); transition: transform 0.4s, box-shadow 0.4s; }
+        .testimonial-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .testimonial-img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-color); margin-bottom: 20px; }
+        .testimonial-name { font-size: 1.3rem; font-weight: 700; color: var(--primary-text-color); margin-bottom: 15px; }
+        .testimonial-question { font-size: 1rem; color: var(--secondary-text-color); line-height: 1.6; }
+
+        /* --- ПОДВАЛ --- */
+        .footer { background-color: #111; padding: 60px 0; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .footer-container { display: flex; justify-content: space-between; gap: 40px; }
+        .footer-left .logo { display: block; margin-bottom: 20px; }
+        .footer-social { display: flex; align-items: center; gap: 15px; }
+        .footer-social p { font-weight: 600; }
+        .footer-social i { font-size: 1.8rem; color: var(--accent-color); transition: transform 0.3s; }
+        .footer-social i:hover { transform: scale(1.2); }
+        .footer-nav h4, .footer-contacts h4 { font-size: 1.2rem; margin-bottom: 20px; color: var(--accent-color); }
+        .footer-nav ul, .footer-contacts ul { list-style: none; }
+        .footer-nav a { color: var(--secondary-text-color); text-decoration: none; line-height: 2; transition: color 0.3s; }
+        .footer-nav a:hover { color: var(--accent-color); }
+        .footer-contacts p { color: var(--secondary-text-color); line-height: 1.8; }
+        .copyright { margin-top: 20px; font-size: 0.9rem; color: #888; }
+
+        /* --- АДАПТИВНОСТЬ --- */
+        @media (max-width: 992px) {
+            .products-grid { grid-template-columns: repeat(2, 1fr); }
+            .new-arrivals-container { flex-direction: column; }
+            .new-arrivals-info { text-align: center; }
+            .new-arrivals-info .section-title { text-align: center; }
+            .footer-container { flex-direction: column; text-align: center; }
+            .footer-social { justify-content: center; }
+            .faq-testimonials { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .section-title { font-size: 2.2rem; }
+            .navigation { display: none; }
+            .hero-container { flex-direction: column; text-align: center; padding-top: 100px; }
+            .hero-content { max-width: 100%; }
+            .hero-content .main-title { font-size: 2.8rem; }
+            .hero-hit-product { margin-top: 40px; }
+        }
+        @media (max-width: 576px) {
+            .products-grid, .new-arrivals-grid { grid-template-columns: 1fr; }
+            .product-card-image { height: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="container">
+            <a class="logo" data-target="page-home">DracoSolo SHOP</a>
+            <nav class="navigation">
+                <ul>
+                    <li><a data-target="page-catalog">Каталог товаров</a></li>
+                    <li><a data-target="page-contacts">Контакты</a></li>
+                    <li><a data-target="page-delivery">Доставка</a></li>
+                </ul>
+            </nav>
+            <div class="header-search">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- БЛОК ДЛЯ ГЛАВНОЙ СТРАНИЦЫ -->
+        <div id="page-home" class="page active">
+            <!-- Главный блок -->
+            <section class="hero">
+                <div class="parallax-bg" style="background-image: url('assets/dragon-bg.jpg');"></div>
+                <div class="container hero-container">
+                    <div class="hero-content">
+                        <span class="subtitle">ТВОЯ УДАЧА С НАМИ</span>
+                        <h1 class="main-title">ФИРМЕННЫЙ МАГАЗИН DRAGON SHOP</h1>
+                        <a class="button" data-target="page-catalog">В каталог</a>
+                    </div>
+                    <div class="hero-hit-product">
+                        <div class="hit-badge">Хит</div>
+                        <img src="майка-Photoroom.png" alt="Футболка" class="hit-product-image">
+                        <p class="hit-product-price">3 600 р.</p>
+                        <a href="#" class="button-secondary">Перейти</a> <!-- Ссылка-заглушка, можно указать id товара -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Топ товаров -->
+            <section class="top-products">
+                <div class="container">
+                    <h2 class="section-title">Топ товаров</h2>
+                    <div class="products-grid">
+                        <!-- Карточка 1 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('10.jpg');">
+                                <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Кресло-мешок</h3>
+                            <p class="product-card-price">9 900 р.</p>
+                        </div>
+                        <!-- Карточка 2 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('2.png');">
+                                <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Набор 3D-стикеров</h3>
+                            <p class="product-card-price">1 200 р.</p>
+                        </div>
+                        <!-- Карточка 3 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('4.jpg');">
+                               <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Шоппер</h3>
+                            <p class="product-card-price">600 р.</p>
+                        </div>
+                        <!-- Карточка 4 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('5.jpg');">
+                               <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Худи Аниме</h3>
+                            <p class="product-card-price">6 200 р.</p>
+                        </div>
+                        <!-- Карточка 5 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('7.jpg');">
+                               <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Лонгслив</h3>
+                            <p class="product-card-price">4 100 р.</p>
+                        </div>
+                        <!-- Карточка 6 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('8.jpg');">
+                               <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Худи</h3>
+                            <p class="product-card-price">3 600 р.</p>
+                        </div>
+                        <!-- Карточка 7 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('9.jpeg');">
+                               <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Штаны белые</h3>
+                            <p class="product-card-price">4 600 р.</p>
+                        </div>
+                        <!-- Карточка 8 -->
+                         <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('chair.png');">
+                               <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Штаны черные</h3>
+                            <p class="product-card-price">2 100 р.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Новинки -->
+            <section class="new-arrivals">
+                <div class="container new-arrivals-container">
+                     <div class="new-arrivals-info">
+                         <h2 class="section-title">Новинки от Дракона!</h2>
+                         <p>Футболка и разные вещи с описанием</p>
+                         <a class="button" data-target="page-catalog">В каталог</a>
+                     </div>
+                     <div class="new-arrivals-grid">
+                         <!-- Карточка 1 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('lamp.png');">
+                                <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Неоновая лампа</h3>
+                            <p class="product-card-price">3 900 р.</p>
+                        </div>
+                         <!-- Карточка 2 -->
+                        <div class="product-card">
+                            <div class="product-card-image" style="background-image: url('mousepad.png');">
+                               <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                            </div>
+                            <h3 class="product-card-title">Коврик для мышки</h3>
+                            <p class="product-card-price">2 200 р.</p>
+                        </div>
+                     </div>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section class="faq">
+                <div class="container">
+                    <h2 class="section-title">Частые вопросы</h2>
+                    <div class="faq-testimonials">
+                        <div class="testimonial-card"><img src="худи аниме.jpg" alt="Фото клиента" class="testimonial-img"><h4 class="testimonial-name">Екатерина Волкова</h4><p class="testimonial-question">"Заказала худи и была в восторге от скорости доставки! Не ожидала, что посылка придет так быстро. Качество на высоте, спасибо!"</p></div>
+                        <div class="testimonial-card"><img src="ytjyjdfz kfvgf.jpg" alt="Фото клиента" class="testimonial-img"><h4 class="testimonial-name">Алексей Смирнов</h4><p class="testimonial-question">"Долго искал такой неоновый светильник. Вписался в мой сетап идеально. Теперь вечерами комната выглядит просто космически!"</p></div>
+                        <div class="testimonial-card"><img src="stickers.png" alt="Фото клиента" class="testimonial-img"><h4 class="testimonial-name">Мария Кузнецова</h4><p class="testimonial-question">"Стикеры просто супер! Обклеила ими ноутбук и ежедневник. Очень яркие и качественные, держатся отлично. Буду заказывать еще."</p></div>
+                    </div>
+                    <div class="faq-accordion">
+                        <div class="faq-item"><div class="faq-question">Как оформить заказ?<i class="fas fa-plus"></i></div><div class="faq-answer"><p>Для оформления заказа просто добавьте понравившиеся товары в корзину...</p></div></div>
+                        <div class="faq-item"><div class="faq-question">Какое качество мерча?<i class="fas fa-plus"></i></div><div class="faq-answer"><p>Мы используем только высококачественные материалы...</p></div></div>
+                        <div class="faq-item"><div class="faq-question">Как долго идёт заказ?<i class="fas fa-plus"></i></div><div class="faq-answer"><p>Сроки доставки зависят от вашего региона...</p></div></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- БЛОК ДЛЯ СТРАНИЦЫ КАТАЛОГА -->
+        <div id="page-catalog" class="page">
+            <section class="page-content">
+                <div class="container">
+                    <h1 class="section-title">Каталог товаров</h1>
+                     <!-- Просто скопировал блок с товарами для примера -->
+                    <div class="products-grid">
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('10.jpg');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Кресло-мешок</h3><p class="product-card-price">9 900 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('2.png');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Набор 3D-стикеров</h3><p class="product-card-price">1 200 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('4.jpg');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Шоппер</h3><p class="product-card-price">600 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('5.jpg');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Худи Аниме</h3><p class="product-card-price">6 200 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('7.jpg');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Лонгслив</h3><p class="product-card-price">4 100 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('8.jpg');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Худи</h3><p class="product-card-price">3 600 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('9.jpeg');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Штаны белые</h3><p class="product-card-price">4 600 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('chair.png');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Штаны черные</h3><p class="product-card-price">2 100 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('lamp.png');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Неоновая лампа</h3><p class="product-card-price">3 900 р.</p></div>
+                        <div class="product-card"><div class="product-card-image" style="background-image: url('mousepad.png');"><button class="favorite-btn"><i class="far fa-heart"></i></button></div><h3 class="product-card-title">Коврик для мышки</h3><p class="product-card-price">2 200 р.</p></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- БЛОК ДЛЯ СТРАНИЦЫ КОНТАКТОВ -->
+        <div id="page-contacts" class="page">
+            <section class="page-content">
+                <div class="container">
+                    <h1 class="section-title">Контакты</h1>
+                    <div style="text-align: center; font-size: 1.2rem; line-height: 2.2;">
+                        <p><strong><i class="fas fa-phone" style="color: var(--accent-color); margin-right: 10px;"></i>Телефон:</strong> +375-33-69-40-297</p>
+                        <p><strong><i class="fas fa-clock" style="color: var(--accent-color); margin-right: 10px;"></i>Время работы:</strong> Пн-Вс с 06:00 до 22:00</p>
+                        <p><strong><i class="fas fa-envelope" style="color: var(--accent-color); margin-right: 10px;"></i>Email:</strong> info@dracosoloshop.com</p>
+                        <p><strong><i class="fab fa-telegram-plane" style="color: var(--accent-color); margin-right: 10px;"></i>Telegram:</strong> @dracosolo_support</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- БЛОК ДЛЯ СТРАНИЦЫ ДОСТАВКИ -->
+        <div id="page-delivery" class="page">
+            <section class="page-content">
+                <div class="container">
+                    <h1 class="section-title">Информация о доставке</h1>
+                     <div style="max-width: 800px; margin: 0 auto; text-align: left; line-height: 1.8; font-size: 1.1rem;">
+                        <p>Мы доставляем наши товары по всей стране. Сроки и стоимость доставки зависят от вашего региона и выбранного способа доставки.</p>
+                        <h3 style="margin-top: 30px; margin-bottom: 10px; color: var(--accent-color);">Стандартная доставка почтой:</h3>
+                        <p>Срок: 5-10 рабочих дней. <br> Стоимость: от 300 р., рассчитывается автоматически при оформлении заказа.</p>
+                        <h3 style="margin-top: 30px; margin-bottom: 10px; color: var(--accent-color);">Курьерская экспресс-доставка:</h3>
+                        <p>Срок: 2-4 рабочих дня. <br> Стоимость: от 600 р., доступна для крупных городов.</p>
+                        <h3 style="margin-top: 30px; margin-bottom: 10px; color: var(--accent-color);">Отслеживание:</h3>
+                        <p>После отправки заказа вы получите трек-номер на вашу электронную почту для отслеживания посылки на сайте транспортной компании.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-left">
+                <a class="logo" data-target="page-home">DracoSolo SHOP</a>
+                <div class="footer-social">
+                    <p>Будь в курсе первым!</p>
+                    <a href="#" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <h4>Меню</h4>
+                <ul>
+                   <li><a data-target="page-home">Главная</a></li>
+                    <li><a data-target="page-catalog">Каталог товаров</a></li>
+                    <li><a data-target="page-delivery">Доставка</a></li>
+                    <li><a data-target="page-contacts">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="footer-contacts">
+                <h4>Контакты</h4>
+                <ul>
+                    <li><p>Мой номер телефона: +375-33-69-40-297</p></li>
+                    <li><p>Время работы: Пн-Вс с 06:00 до 22:00, а дальше спать</p></li>
+                    <li><p class="copyright">Сайт сделал LEGA — Даниил Поляков Сергеевич — Все права защищены сучки © 2025 г.</p></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- СКРИПТЫ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // --- КОД ДЛЯ НАВИГАЦИИ ПО ОДНОСТРАНИЧНОМУ САЙТУ ---
+            const navLinks = document.querySelectorAll('a[data-target]');
+            const pages = document.querySelectorAll('.page');
+            const headerLinks = document.querySelectorAll('.navigation a[data-target]');
+
+            function switchPage(targetId) {
+                // Переключаем видимость страниц
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                    if (page.id === targetId) {
+                        page.classList.add('active');
+                    }
+                });
+
+                // Обновляем активную ссылку в шапке
+                headerLinks.forEach(link => {
+                    link.classList.remove('active-link');
+                    if (link.getAttribute('data-target') === targetId) {
+                        link.classList.add('active-link');
+                    }
+                });
+
+                window.scrollTo(0, 0); // Прокрутка вверх при смене страницы
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    switchPage(targetId);
+                });
+            });
+
+
+            // --- ВАШ СТАРЫЙ КОД С АНИМАЦИЯМИ ---
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.to(".parallax-bg", { scrollTrigger: { scrub: 1 }, y: 250 });
+            gsap.utils.toArray('.products-grid .product-card').forEach((card, i) => { gsap.fromTo(card, { autoAlpha: 0, y: 60 }, { duration: 0.8, autoAlpha: 1, y: 0, scrollTrigger: { trigger: card, start: "top 90%", toggleActions: "play none none reset" }, delay: i * 0.1 }); });
+            gsap.utils.toArray('.section-title').forEach(title => { gsap.fromTo(title, { autoAlpha: 0, y: 50 }, { duration: 1, autoAlpha: 1, y: 0, scrollTrigger: { trigger: title, start: "top 90%", toggleActions: "play none none reset" } }); });
+            gsap.from(".new-arrivals-info", { scrollTrigger: { trigger: ".new-arrivals-info", toggleActions: "play none none reset" }, duration: 1, x: -100, autoAlpha: 0, ease: "power2.out" });
+            gsap.from(".new-arrivals-grid .product-card", { scrollTrigger: { trigger: ".new-arrivals-grid", toggleActions: "play none none reset" }, duration: 0.8, y: 100, autoAlpha: 0, stagger: 0.2 });
+            gsap.utils.toArray('.testimonial-card').forEach((card, i) => { gsap.fromTo(card, { autoAlpha: 0, y: 50 }, { duration: 0.7, autoAlpha: 1, y: 0, scrollTrigger: { trigger: card, start: "top 90%", toggleActions: "play none none reset" }, delay: i * 0.2 }); });
+            
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    faqItems.forEach(otherItem => { if(otherItem !== item) { otherItem.classList.remove('active'); otherItem.querySelector('.faq-answer').style.maxHeight = 0; } });
+                    item.classList.toggle('active');
+                    if (item.classList.contains('active')) { answer.style.maxHeight = answer.scrollHeight + "px"; } else { answer.style.maxHeight = 0; }
+                });
+            });
+
+            const cards = document.querySelectorAll('.product-card, .hero-hit-product');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    const rotateX = -y / 20; const rotateY = x / 20;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+                });
+                card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)'; });
+            });
+            
+            const favoriteButtons = document.querySelectorAll('.favorite-btn');
+            favoriteButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const icon = button.querySelector('i');
+                    icon.classList.toggle('far'); icon.classList.toggle('fas');
+                    if(icon.classList.contains('fas')){ gsap.fromTo(icon, { scale: 1 }, { scale: 1.5, duration: 0.2, yoyo: true, repeat: 1, ease: "power1.inOut" }); }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
